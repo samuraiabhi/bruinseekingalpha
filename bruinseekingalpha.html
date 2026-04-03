@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bruin Seeking Alpha</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+
+/* ── Reset ────────────────────────────────────── */
+*, *::before, *::after {
+  margin: 0; padding: 0;
+  box-sizing: border-box;
+}
+
+/* ── Page ─────────────────────────────────────── */
+html, body {
+  height: 100%;
+}
+
+body {
+  background: #F7F5F0;
+  color: #111;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+}
+
+/* ── Decorative dot ───────────────────────────── */
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #2D68C4;
+  margin: 0 auto 32px;
+  animation: fade-up 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* ── Hero ─────────────────────────────────────── */
+.hero {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px;
+}
+
+.label {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #2D68C4;
+  margin-bottom: 18px;
+  animation: fade-up 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.05s both;
+}
+
+h1 {
+  font-family: 'DM Serif Display', Georgia, serif;
+  font-size: clamp(44px, 8vw, 100px);
+  font-weight: 400;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  color: #111;
+  margin-bottom: 6px;
+  animation: fade-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both;
+}
+
+h1 em {
+  font-style: italic;
+  color: #2D68C4;
+}
+
+.tagline {
+  font-size: clamp(13px, 1.6vw, 16px);
+  font-weight: 300;
+  color: #888;
+  letter-spacing: 0.04em;
+  margin-top: 20px;
+  margin-bottom: 52px;
+  animation: fade-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.18s both;
+}
+
+/* ── Button ───────────────────────────────────── */
+.btn-wrap {
+  animation: fade-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.26s both;
+}
+
+.join-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: #fff;
+  background: #2D68C4;
+  border: none;
+  border-radius: 100px;
+  padding: 15px 36px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: background 0.2s, box-shadow 0.2s, transform 0.15s;
+  box-shadow: 0 2px 16px rgba(45, 104, 196, 0.28);
+}
+
+.join-btn:hover {
+  background: #1e55a8;
+  box-shadow: 0 4px 24px rgba(45, 104, 196, 0.38);
+  transform: translateY(-1px);
+}
+
+/* Ripple */
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.3);
+  transform: scale(0);
+  animation: ripple-out 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  pointer-events: none;
+}
+
+@keyframes ripple-out {
+  to { transform: scale(4); opacity: 0; }
+}
+
+/* Button press */
+.join-btn.pressing {
+  transform: scale(0.94);
+  box-shadow: 0 1px 8px rgba(45, 104, 196, 0.2);
+}
+
+/* Arrow icon */
+.btn-arrow {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.join-btn:hover .btn-arrow {
+  transform: translateX(3px);
+}
+
+/* ── Modal overlay ────────────────────────────── */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(17,17,17,0.45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: grid;
+  place-items: center;
+  z-index: 50;
+  padding: 24px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.overlay.open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* ── Modal card ───────────────────────────────── */
+.modal {
+  background: #fff;
+  border-radius: 20px;
+  padding: 44px 40px 40px;
+  width: 100%;
+  max-width: 420px;
+  position: relative;
+  text-align: center;
+  box-shadow: 0 32px 80px rgba(0,0,0,0.18);
+  transform: translateY(20px) scale(0.96);
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.overlay.open .modal {
+  transform: translateY(0) scale(1);
+}
+
+.modal-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #2D68C4;
+  margin: 0 auto 20px;
+}
+
+.modal h2 {
+  font-family: 'DM Serif Display', Georgia, serif;
+  font-size: 28px;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  color: #111;
+  margin-bottom: 8px;
+}
+
+.modal .modal-sub {
+  font-size: 14px;
+  font-weight: 300;
+  color: #999;
+  line-height: 1.6;
+  margin-bottom: 32px;
+}
+
+.field {
+  width: 100%;
+  background: #F7F5F0;
+  border: 1.5px solid transparent;
+  border-radius: 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #111;
+  padding: 13px 16px;
+  margin-bottom: 10px;
+  outline: none;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.field::placeholder { color: #bbb; }
+
+.field:focus {
+  background: #fff;
+  border-color: #2D68C4;
+}
+
+.modal-submit {
+  width: 100%;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: #fff;
+  background: #111;
+  border: none;
+  border-radius: 100px;
+  padding: 14px;
+  cursor: pointer;
+  margin-top: 6px;
+  transition: background 0.2s, transform 0.15s;
+}
+
+.modal-submit:hover {
+  background: #2D68C4;
+  transform: translateY(-1px);
+}
+
+.modal-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #F0EDE8;
+  border: none;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: background 0.2s;
+}
+
+.modal-close:hover { background: #E5E1DA; }
+
+.modal-close svg {
+  width: 12px;
+  height: 12px;
+  stroke: #666;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+/* ── Animations ───────────────────────────────── */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+</style>
+</head>
+<body>
+
+<main class="hero">
+  <h1>Bruin<br><em>Seeking Alpha</em></h1>
+  <p class="tagline">For Love of The Game</p>
+  <div class="btn-wrap">
+    <button class="join-btn" id="joinBtn">
+      Join the club
+      <svg class="btn-arrow" viewBox="0 0 16 16" fill="none">
+        <path d="M3 8h10M9 4l4 4-4 4" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+  </div>
+</main>
+
+<script>
+  const joinBtn = document.getElementById('joinBtn');
+
+  joinBtn.addEventListener('click', function(e) {
+    // Ripple effect
+    const rect = joinBtn.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height);
+    const rip  = document.createElement('span');
+    rip.className = 'ripple';
+    Object.assign(rip.style, {
+      width:  size + 'px',
+      height: size + 'px',
+      left:   (e.clientX - rect.left  - size / 2) + 'px',
+      top:    (e.clientY - rect.top   - size / 2) + 'px',
+    });
+    joinBtn.appendChild(rip);
+    rip.addEventListener('animationend', () => rip.remove());
+
+    // Press feedback
+    joinBtn.classList.add('pressing');
+    setTimeout(() => joinBtn.classList.remove('pressing'), 150);
+
+    // Open Google Form in new tab
+    setTimeout(() => window.open('https://forms.gle/rWZT3RZCvWEKUYAt9', '_blank'), 150);
+  });
+</script>
+
+</body>
+</html>
